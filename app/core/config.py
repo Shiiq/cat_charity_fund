@@ -1,14 +1,19 @@
-from pydantic import BaseSettings
+from typing import Optional
+
+from pydantic import BaseSettings, EmailStr
 
 
 class Settings(BaseSettings):
     app_title: str = 'Сервис пожертвований QRKot'
     database_url: str
     description: str
-    secret: str = 'extra gin please'
+    secret: str = 'extra_gin'
+    first_superuser_email: Optional[EmailStr] = None
+    first_superuser_password: Optional[str] = None
+
 
     class Config:
-        env_file = '../.env'
+        env_file = './../.env'
 
 
 settings = Settings()
