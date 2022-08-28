@@ -6,12 +6,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.db import get_async_session
 from core.user import current_user, current_superuser
 from crud.charityproject import charity_project_crud
-from schemas.charityproject import CharityProjectCreate, CharityProjectUpdate
+from schemas.charityproject import (
+    CharityProjectCreate, CharityProjectUpdate, CharityProjectFromDB
+)
 
 router = APIRouter()
 
 
-@router.get('/')
+@router.get('/', response_model=List[CharityProjectFromDB])
 async def get_all_charity_project(
         session: AsyncSession = Depends(get_async_session)
 ):
