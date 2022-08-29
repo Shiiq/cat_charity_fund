@@ -26,7 +26,7 @@ async def get_all_charity_project(
     # active_projects = await session.execute(
     #     select(CharityProject).where(
     #         CharityProject.fully_invested == false()
-    #     )
+    #     ).order_by(CharityProject.create_date.desc())
     # )
     # return active_projects.scalars().all()
     return charity_projects
