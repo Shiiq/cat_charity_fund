@@ -25,7 +25,6 @@ class DonationResponse(DonationCreate):
 
 class DonationFromDB(FinBaseSchema, DonationCreate):
     """Схема для отображения полной информации о пожертвовании."""
-    # user_id: Optional[int]
 
     class Config:
         orm_mode = True

@@ -6,6 +6,7 @@ from models import Donation, User
 
 
 class DonationCRUD(CRUDBase):
+
     async def get_donation_by_user(
             self,
             user: User,
@@ -19,4 +20,4 @@ class DonationCRUD(CRUDBase):
         return donations.scalars().all()
 
 
-donation_crud = CRUDBase(Donation)
+donation_crud = DonationCRUD(Donation)

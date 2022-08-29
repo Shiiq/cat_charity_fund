@@ -7,32 +7,40 @@ from core.db import get_async_session
 from core.user import current_user, current_superuser
 from crud.donation import donation_crud
 from models import User
-from schemas.donation import (
-    DonationCreate, DonationResponse, DonationFromDB
-)
+from schemas.donation import DonationCreate, DonationResponse, DonationFromDB
 
 router = APIRouter()
 
 
-@router.get('/', response_model=List[DonationFromDB])
+@router.get(
+    '/',
+    response_model=List[DonationFromDB],
+    dependencies=[Depends(current_superuser)]
+)
 async def get_all_donations(
         session: AsyncSession = Depends(get_async_session)
 ):
-    """Получить список всех пожертвований. Для суперюзера."""
+    """
+    Эндпоинт для просмотра пожертвований всех юзеров.
+    Только для суперюзера.
+    """
     donations = await donation_crud.get_multi(session)
     return donations
 
 
-@router.get('/my',
-            response_model=List[DonationFromDB],
-            response_model_exclude={'user_id'})
+@router.get(
+    '/my',
+    response_model=List[DonationFromDB],
+    response_model_exclude={'user_id'}
+)
 async def get_user_donations(
         user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ):
-    """Получить список всех пожертвований текущего юзера."""
-    user_donations = await donation_crud.get_by_attribute(
-        attr_name='user_id', attr_value=user.id, session=session
+    """Эндпоинт для просмотра всех пожертвований текущего юзера."""
+    user_donations = await donation_crud.get_donation_by_user(
+        user=user,
+        session=session
     )
     return user_donations
 
@@ -43,8 +51,10 @@ async def create_new_donation(
         user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ):
-    """Создать новое пожертвование."""
+    """Эндпоинт для создания пожертвования."""
     new_donation = await donation_crud.create(
-        obj_in=donation, user=user, session=session
+        obj_in=donation,
+        user=user,
+        session=session
     )
     return new_donation
