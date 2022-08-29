@@ -7,6 +7,7 @@ from .fin_base import FinBaseSchema
 
 
 class DonationCreate(BaseModel):
+    """Схема для создания пожертвования."""
     full_amount: PositiveInt = Field(..., title='Сумма пожертвования')
     comment: Optional[str] = Field(None, title='Комментарий к пожертвованию')
 
@@ -14,11 +15,17 @@ class DonationCreate(BaseModel):
         extra = Extra.forbid
 
 
-# class DonationResponse(DonationCreate):
-#     id: int
-#     create_date: datetime = Field(...)
-#
-#
-# class DonationDB(BaseModel):
-#     user_id: Optional[int]
-#     pass
+class DonationResponse(DonationCreate):
+    """Схема для ответного сообщения на создание пожертвование."""
+    create_date: datetime = Field(...)
+
+    class Config:
+        orm_mode = True
+
+
+class DonationFromDB(FinBaseSchema, DonationCreate):
+    """Схема для отображения полной информации о пожертвовании."""
+    # user_id: Optional[int]
+
+    class Config:
+        orm_mode = True

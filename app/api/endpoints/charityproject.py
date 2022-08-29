@@ -21,18 +21,18 @@ async def get_all_charity_project(
     return charity_projects
 
 
-@router.post('/')
+@router.post('/', response_model=CharityProjectFromDB)
 async def create_new_charity_project(
         charity_project: CharityProjectCreate,
         session: AsyncSession = Depends(get_async_session),
 ):
     new_charity_project = await charity_project_crud.create(
-        charity_project, session
+        obj_in=charity_project, session=session
     )
     return new_charity_project
 
 
-@router.patch('/{project_id}')
+@router.patch('/{project_id}', response_model=CharityProjectFromDB)
 async def update_charity_project(
         project_id: int,
         charity_project_data: CharityProjectUpdate,
@@ -55,7 +55,7 @@ async def update_charity_project(
     return charity_project
 
 
-@router.delete('/{project_id}')
+@router.delete('/{project_id}', response_model=CharityProjectFromDB)
 async def delete_charity_project(
         project_id: int,
         session: AsyncSession = Depends(get_async_session)

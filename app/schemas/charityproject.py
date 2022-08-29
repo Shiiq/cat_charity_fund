@@ -7,7 +7,9 @@ from .fin_base import FinBaseSchema
 
 
 class CharityProjectCreate(BaseModel):
-    """POST - все поля обязательные."""
+    """
+    Схема для POST запроса. Все поля опциональные.
+    """
     name: str = Field(..., title='Проект', min_length=1, max_length=100)
     description: str = Field(..., title='Описание', min_length=1)
     full_amount: PositiveInt = Field(..., title='Сумма пожертвования')
@@ -17,7 +19,9 @@ class CharityProjectCreate(BaseModel):
 
 
 class CharityProjectUpdate(BaseModel):
-    """PATCH - все поля опциональные."""
+    """
+    Схема для PATCH запроса. Все поля опциональные.
+    """
     name: Optional[str] = Field(None, min_length=1, max_length=100)
     description: Optional[str] = Field(None, min_length=1)
     full_amount: Optional[PositiveInt] = Field(None)
