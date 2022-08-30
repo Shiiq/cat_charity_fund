@@ -4,4 +4,6 @@ from core.db import Base
 
 
 class User(SQLAlchemyBaseUserTable[int], Base):
+    __table_args__ = {'extend_existing': True}
+
     pass
