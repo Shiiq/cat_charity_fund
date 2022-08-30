@@ -1,9 +1,5 @@
 from typing import List
-#
-from sqlalchemy import select
-from sqlalchemy.sql.expression import false, true
-from models import CharityProject, Donation
-#
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -13,6 +9,7 @@ from crud.charityproject import charity_project_crud
 from schemas.charityproject import (CharityProjectCreate,
                                     CharityProjectUpdate,
                                     CharityProjectFromDB)
+from services.investing import investing_process
 
 router = APIRouter()
 
@@ -22,13 +19,8 @@ async def get_all_charity_project(
         session: AsyncSession = Depends(get_async_session)
 ):
     """Эндпоинт для просмотра списка проектов."""
+
     charity_projects = await charity_project_crud.get_multi(session)
-    # active_projects = await session.execute(
-    #     select(CharityProject).where(
-    #         CharityProject.fully_invested == false()
-    #     ).order_by(CharityProject.create_date.desc())
-    # )
-    # return active_projects.scalars().all()
     return charity_projects
 
 
@@ -42,10 +34,13 @@ async def create_new_charity_project(
         session: AsyncSession = Depends(get_async_session),
 ):
     """Эндпоинт для создания нового проекта. Только для суперюзера."""
+
     new_charity_project = await charity_project_crud.create(
-        obj_in=charity_project, session=session
+        obj_in=charity_project,
+        session=session
     )
-    return new_charity_project
+    char_proj = await investing_process(new_charity_project, session)
+    return char_proj
 
 
 @router.patch(
@@ -59,6 +54,7 @@ async def update_charity_project(
         session: AsyncSession = Depends(get_async_session)
 ):
     """Эндпоинт для редактирования проекта. Только для суперюзера."""
+
     charity_project = await charity_project_crud.get_by_attribute(
         attr_name='id',
         attr_value=project_id,
@@ -92,6 +88,7 @@ async def delete_charity_project(
         session: AsyncSession = Depends(get_async_session)
 ):
     """Эндпоинт для удаления проекта. Только для суперюзера."""
+
     charity_project = await charity_project_crud.get_by_attribute(
         attr_name='id',
         attr_value=project_id,
@@ -105,5 +102,7 @@ async def delete_charity_project(
                    'его можно только закрыть.'
         )
     charity_project = await charity_project_crud.remove(
-        charity_project, session)
+        charity_project,
+        session
+    )
     return charity_project

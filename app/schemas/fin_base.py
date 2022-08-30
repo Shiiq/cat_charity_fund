@@ -1,10 +1,12 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, Field, PositiveInt
+from pydantic import BaseModel, Field
 
 
 class FinBaseSchema(BaseModel):
+    """Базовая схема с общими полями."""
+
     id: int
     create_date: datetime = Field(...)
     close_date: Optional[datetime] = Field(...)

@@ -8,6 +8,7 @@ from core.user import current_user, current_superuser
 from crud.donation import donation_crud
 from models import User
 from schemas.donation import DonationCreate, DonationResponse, DonationFromDB
+from services.investing import investing_process
 
 router = APIRouter()
 
@@ -24,6 +25,7 @@ async def get_all_donations(
     Эндпоинт для просмотра пожертвований всех юзеров.
     Только для суперюзера.
     """
+
     donations = await donation_crud.get_multi(session)
     return donations
 
@@ -38,6 +40,7 @@ async def get_user_donations(
         session: AsyncSession = Depends(get_async_session)
 ):
     """Эндпоинт для просмотра всех пожертвований текущего юзера."""
+
     user_donations = await donation_crud.get_donation_by_user(
         user=user,
         session=session
@@ -52,9 +55,11 @@ async def create_new_donation(
         session: AsyncSession = Depends(get_async_session)
 ):
     """Эндпоинт для создания пожертвования."""
+
     new_donation = await donation_crud.create(
         obj_in=donation,
         user=user,
         session=session
     )
-    return new_donation
+    donat = await investing_process(new_donation, session)
+    return donat

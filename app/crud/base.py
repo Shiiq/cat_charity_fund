@@ -13,6 +13,7 @@ class CRUDBase:
     Базовый класс для реализации CRUD-операций.
     Для инициализации требует класс модели.
     """
+
     def __init__(self, model):
         self.model = model
 

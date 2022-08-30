@@ -1,18 +1,17 @@
 from typing import Optional, Union
 
 from fastapi import Depends, Request
-from fastapi_users import (
-    BaseUserManager, FastAPIUsers, IntegerIDMixin, InvalidPasswordException
-)
-from fastapi_users.authentication import (
-    AuthenticationBackend, BearerTransport, JWTStrategy
-)
+from fastapi_users import (BaseUserManager, FastAPIUsers,
+                           IntegerIDMixin, InvalidPasswordException)
+from fastapi_users.authentication import (AuthenticationBackend,
+                                          BearerTransport,
+                                          JWTStrategy)
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.config import settings
 from core.db import get_async_session
-from models.user import User
+from models import User
 from schemas.user import UserCreate
 
 
@@ -40,7 +39,7 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
         self,
         password: str,
         user: Union[UserCreate, User],
-    ) -> None:
+    ):
         if len(password) < 3:
             raise InvalidPasswordException(
                 reason='Password should be at least 3 characters'

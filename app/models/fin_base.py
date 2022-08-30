@@ -5,7 +5,8 @@ from core.db import Base
 
 
 class FinBase(Base):
-    """Базовая модель."""
+    """Базовая модель с общими полями."""
+
     __abstract__ = True
 
     full_amount = Column(Integer)

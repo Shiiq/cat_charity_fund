@@ -1,4 +1,4 @@
-from .base import CRUDBase
+from crud.base import CRUDBase
 from models import CharityProject
 
 
