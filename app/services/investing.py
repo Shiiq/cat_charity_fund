@@ -6,7 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.sql.expression import false
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from models import CharityProject, Donation
+from app.models import CharityProject, Donation
 
 
 async def get_invest_objects(
@@ -45,8 +45,16 @@ async def investing_process(
 ):
     """
     Процесс инвестирования.
-    :param new_obj: Создаваемый благотворительный проект или пожертвование.
+    :param new_obj: благотворительный проект или пожертвование.
     """
+
+    # Если в объекте уже собрана вся сумма - закрываем
+    if new_obj.full_amount == new_obj.invested_amount:
+        await close_obj(new_obj)
+        session.add(new_obj)
+        await session.commit()
+        await session.refresh(new_obj)
+        return new_obj
 
     # Если переданный объект - благотворительный проект
     # то вытаскиваем из БД незакрытые пожертвования для инвестирования в проект
@@ -65,7 +73,7 @@ async def investing_process(
         )
 
     # Если нет незакрытых проектов/пожертвований
-    # возвзращаем объект без изменений
+    # возвращаем объект без изменений
     if not objects_to_invest:
         return new_obj
 

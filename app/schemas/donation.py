@@ -3,7 +3,7 @@ from typing import Optional
 
 from pydantic import BaseModel, Extra, Field, PositiveInt
 
-from schemas.fin_base import FinBaseSchema
+from .fin_base import FinBaseSchema
 
 
 class DonationCreate(BaseModel):
@@ -19,6 +19,7 @@ class DonationCreate(BaseModel):
 class DonationResponse(DonationCreate):
     """Схема для ответного сообщения на создание пожертвования."""
 
+    id: int
     create_date: datetime = Field(...)
 
     class Config:
@@ -27,6 +28,8 @@ class DonationResponse(DonationCreate):
 
 class DonationFromDB(FinBaseSchema, DonationCreate):
     """Схема для отображения полной информации о пожертвовании из БД."""
+
+    user_id: int
 
     class Config:
         orm_mode = True

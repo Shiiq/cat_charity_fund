@@ -11,4 +11,4 @@ class FinBaseSchema(BaseModel):
     create_date: datetime = Field(...)
     close_date: Optional[datetime] = Field(...)
     invested_amount: Optional[int] = Field(..., ge=0)
-    fully_invested: bool
+    fully_invested: bool = Field(False)

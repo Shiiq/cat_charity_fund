@@ -1,20 +1,21 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.db import get_async_session
-from core.user import current_user, current_superuser
-from crud.donation import donation_crud
-from models import User
-from schemas.donation import DonationCreate, DonationResponse, DonationFromDB
-from services.investing import investing_process
+from app.core.db import get_async_session
+from app.core.user import current_user, current_superuser
+from app.crud.donation import donation_crud
+from app.models import User
+from app.schemas.donation import DonationCreate, DonationResponse, DonationFromDB
+from app.services.investing import investing_process
 
 router = APIRouter()
 
 
 @router.get(
     '/',
+    response_model_exclude_none=True,
     response_model=List[DonationFromDB],
     dependencies=[Depends(current_superuser)]
 )
@@ -32,7 +33,7 @@ async def get_all_donations(
 
 @router.get(
     '/my',
-    response_model=List[DonationFromDB],
+    response_model=List[DonationResponse],
     response_model_exclude={'user_id'}
 )
 async def get_user_donations(
@@ -48,7 +49,11 @@ async def get_user_donations(
     return user_donations
 
 
-@router.post('/', response_model=DonationResponse)
+@router.post(
+    '/',
+    response_model_exclude_none=True,
+    response_model=DonationResponse
+)
 async def create_new_donation(
         donation: DonationCreate,
         user: User = Depends(current_user),
@@ -61,5 +66,6 @@ async def create_new_donation(
         user=user,
         session=session
     )
+    # Процесс инвестирования
     donat = await investing_process(new_donation, session)
     return donat

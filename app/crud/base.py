@@ -5,12 +5,12 @@ from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from models import User
+from app.models import User
 
 
 class CRUDBase:
     """
-    Базовый класс для реализации CRUD-операций.
+    Базовый класс для реализации базовых CRUD-операций.
     Для инициализации требует класс модели.
     """
 
